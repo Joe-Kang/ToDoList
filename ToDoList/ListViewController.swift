@@ -26,9 +26,19 @@ class ListViewController: UITableViewController, cellDelegate {
         if let cell = tableView.cellForRow(at: indexPath) {
             if cell.accessoryType == .none {
                 cell.accessoryType = .checkmark
+                print(cell.accessoryType.rawValue)
+                items[indexPath.row].checked = true
             } else {
                 cell.accessoryType = .none
+                print(cell.accessoryType.rawValue)
+                items[indexPath.row].checked = false
             }
+            do {
+                try context.save()
+            } catch {
+                print(error)
+            }
+            tableView.reloadData()
         }
     }
     
@@ -42,6 +52,11 @@ class ListViewController: UITableViewController, cellDelegate {
         format.dateFormat = "dd/MM/yyyy"
         let result = format.string(from : items[indexPath.row].date!)
         cell.dateLabel?.text = result
+        if items[indexPath.row].checked == true {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         return cell
     }
     
@@ -66,6 +81,7 @@ class ListViewController: UITableViewController, cellDelegate {
         item.title = title
         item.desc = description
         item.date = date
+        item.checked = false
         print("\(date)")
         items.append(item)
         do {
